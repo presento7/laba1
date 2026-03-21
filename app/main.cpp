@@ -1,10 +1,14 @@
+#include "main_window.h"
+
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QPushButton>
 
 int main(int argc, char** argv) {
-    QApplication a(argc, argv);
-    QPushButton button("Hello, world!", nullptr);
-    button.resize(200, 100);
-    button.show();
+    QApplication app(argc, argv);
+    QApplication::setOrganizationName("BSU");
+    QApplication::setApplicationName("TicketSprint");
+
+    MainWindow window;
+    window.show();
+
     return QApplication::exec();
 }
