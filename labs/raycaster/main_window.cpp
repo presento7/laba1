@@ -74,11 +74,9 @@ MainWindow::MainWindow() : canvas_(new CanvasWidget(this)) {
 void MainWindow::UpdateHelpText() {
     if (mode_selector_->currentIndex() == 0) {
         help_label_->setText(
-            "Move the cursor inside the canvas to steer the light source cluster and inspect "
-            "penumbras.");
+            "Режим света: перемещайте курсор внутри поля, чтобы двигать источник света.");
     } else {
         help_label_->setText(
-            "Create obstacles with left clicks. Right click closes the current polygon and starts "
-            "a new one.");
+            "Режим полигонов: ЛКМ добавляет вершины, ПКМ завершает текущий многоугольник.");
     }
 }

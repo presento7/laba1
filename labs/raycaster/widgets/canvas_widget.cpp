@@ -43,10 +43,6 @@ QColor PolygonOutlineColor() {
     return QColor(185, 205, 255, 180);
 }
 
-QColor HudTextColor() {
-    return QColor(237, 241, 255);
-}
-
 }  // namespace
 
 CanvasWidget::CanvasWidget(QWidget* parent)
@@ -77,7 +73,6 @@ void CanvasWidget::paintEvent(QPaintEvent* event) {
     DrawLightAreas(&painter);
     DrawPolygons(&painter);
     DrawLightSources(&painter);
-    DrawHud(&painter);
 }
 
 void CanvasWidget::mouseMoveEvent(QMouseEvent* event) {
@@ -224,34 +219,6 @@ void CanvasWidget::DrawLightSources(QPainter* painter) {
         painter->setBrush(GlowCoreColor());
         painter->drawEllipse(source, 3.0, 3.0);
     }
-
-    painter->restore();
-}
-
-void CanvasWidget::DrawHud(QPainter* painter) {
-    const QRectF bounds = SceneBounds().adjusted(16.0, 16.0, -16.0, -16.0);
-    painter->save();
-    painter->setPen(HudTextColor());
-
-    QFont title_font = font();
-    title_font.setPointSize(12);
-    title_font.setBold(true);
-    painter->setFont(title_font);
-    painter->drawText(bounds, Qt::AlignLeft | Qt::AlignTop, "2D Raycaster");
-
-    QFont body_font = font();
-    body_font.setPointSize(10);
-    painter->setFont(body_font);
-
-    const QString help_text =
-        mode_ == Mode::kLight
-            ? "Light mode: move the mouse to move the whole cluster of light sources."
-            : "Polygons mode: left click to add vertices, right click to finish the current "
-              "polygon.";
-
-    painter->drawText(
-        bounds.adjusted(0.0, 22.0, 0.0, 0.0), Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
-        help_text);
 
     painter->restore();
 }

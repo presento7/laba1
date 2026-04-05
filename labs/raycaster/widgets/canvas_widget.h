@@ -31,7 +31,6 @@ class CanvasWidget : public QWidget {
     void DrawLightAreas(QPainter* painter);
     void DrawPolygons(QPainter* painter);
     void DrawLightSources(QPainter* painter);
-    void DrawHud(QPainter* painter);
 
     Controller controller_;
     Mode mode_;
