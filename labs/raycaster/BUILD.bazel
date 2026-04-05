@@ -1,0 +1,91 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+load("@rules_qt//:qt.bzl", "qt_cc_library")
+
+cc_library(
+    name = "geometry",
+    srcs = [
+        "widgets/controller.cpp",
+        "widgets/polygon.cpp",
+        "widgets/ray.cpp",
+    ],
+    hdrs = [
+        "widgets/controller.h",
+        "widgets/polygon.h",
+        "widgets/ray.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@rules_qt//:qt_core",
+    ],
+)
+
+qt_cc_library(
+    name = "ui",
+    srcs = [
+        "main_window.cpp",
+        "widgets/canvas_widget.cpp",
+    ],
+    hdrs = [
+        "main_window.h",
+        "widgets/canvas_widget.h",
+    ],
+    deps = [
+        ":geometry",
+        "@rules_qt//:qt_core",
+        "@rules_qt//:qt_gui",
+        "@rules_qt//:qt_widgets",
+    ],
+)
+
+cc_binary(
+    name = "raycaster_qt_bazel",
+    srcs = ["main.cpp"],
+    deps = [
+        ":ui",
+        "@rules_qt//:qt_core",
+        "@rules_qt//:qt_widgets",
+    ],
+    data = select({
+        "@platforms//os:linux": [
+            "@qt_linux_x86_64//:lib",
+            "@qt_linux_x86_64//:plugins",
+        ],
+        "@rules_qt//:osx_x86_64": [
+            "@qt_mac_x86_64//:lib",
+            "@qt_mac_x86_64//:plugins",
+        ],
+        "@rules_qt//:osx_arm64": [
+            "@qt_mac_aarch64//:lib",
+            "@qt_mac_aarch64//:plugins",
+        ],
+        "@platforms//os:windows": [
+            "@qt_windows_x86_64//:plugins",
+        ],
+    }),
+    env = select({
+        "@platforms//os:linux": {
+            "QT_QPA_PLATFORM": "xcb",
+            "QT_QPA_PLATFORM_PLUGIN_PATH": "$(location @qt_linux_x86_64//:plugins)/platforms",
+            "QT_PLUGIN_PATH": "$(location @qt_linux_x86_64//:plugins)",
+        },
+        "@rules_qt//:osx_x86_64": {
+            "DYLD_FRAMEWORK_PATH": "$(location @qt_mac_x86_64//:lib)",
+            "QT_QPA_PLATFORM_PLUGIN_PATH": "$(location @qt_mac_x86_64//:plugins)/platforms",
+            "QT_PLUGIN_PATH": "$(location @qt_mac_x86_64//:plugins)",
+        },
+        "@rules_qt//:osx_arm64": {
+            "DYLD_FRAMEWORK_PATH": "$(location @qt_mac_aarch64//:lib)",
+            "QT_QPA_PLATFORM_PLUGIN_PATH": "$(location @qt_mac_aarch64//:plugins)/platforms",
+            "QT_PLUGIN_PATH": "$(location @qt_mac_aarch64//:plugins)",
+        },
+        "@platforms//os:windows": {
+            "QT_QPA_PLATFORM_PLUGIN_PATH": "$(location @qt_windows_x86_64//:plugins)/platforms",
+            "QT_PLUGIN_PATH": "$(location @qt_windows_x86_64//:plugins)",
+        },
+    }),
+)
+
+sh_binary(
+    name = "raycaster",
+    srcs = ["run_raycaster.sh"],
+)
